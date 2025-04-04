@@ -1,17 +1,27 @@
 version: 0.2
 
+env:
+  computeType: BUILD_GENERAL1_MEDIUM
+  image: aws/codebuild/standard:5.0
+  privilegedMode: true
+  type: LINUX_CONTAINER
+
 phases:
   pre_build:
     commands:
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 774305614505.dkr.ecr.us-east-1.amazonaws.com
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 774305614505.dkr.ecr.ap-south-1.amazonaws.com
   build:
     commands:
+      - echo Building Docker image...
       - docker build -t ai .
       - docker tag ai:latest 774305614505.dkr.ecr.ap-south-1.amazonaws.com/ai:latest
   post_build:
     commands:
+      - echo Pushing Docker image...
       - docker push 774305614505.dkr.ecr.ap-south-1.amazonaws.com/ai:latest
       - echo Writing image definitions file...
-      - printf '[{"name":"ai","imageUri":"%s"}]' 774305614505.dkr.ecr.ap-south-1.amazonaws.com/ai:latest > imagedefinitions.json   
+      - printf '[{"name":"ai","imageUri":"%s"}]' 774305614505.dkr.ecr.ap-south-1.amazonaws.com/ai:latest > imagedefinitions.json
+
 artifacts:
   files: imagedefinitions.json
