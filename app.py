@@ -14,7 +14,6 @@ if __name__ == '__main__':
     #app.run(debug=True)
     app.run(host="0.0.0.0", port=80) # to change the port .
 
-
 # make docker file
 # docker build -t class3 .
 # docker run -p 5000:5000 class3
